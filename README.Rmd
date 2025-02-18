@@ -1,0 +1,20 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Bibliometric Analysis Tutorial
+
+## Overview
+
+This repository contains a tutorial for performing bibliometric analysis using the `bibliometrix` R package. Bibliometric analysis is a quantitative method to study scholarly communication patterns by analyzing publication metadata.
+
+This is a personal collection of curated notes and codes.

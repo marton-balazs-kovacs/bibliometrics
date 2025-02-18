@@ -1,0 +1,285 @@
+---
+title: "Bibliometric analysis"
+subtitle: "Guideline and knowledge base"
+author: "Marton Kovacs"
+format: html
+title-block-banner: true
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+# Introduction
+
+-   Uses of the method:
+
+    -   gain a one-stop overview
+
+    -   identify knowledge gaps
+
+    -   identify key players such as researchers, institutions, countries, or journals and make visible the scope and impact of the work of these players
+
+    -   derive novel ideas for investigation
+
+    -   position their intended contributions to the field
+
+    -   aiding academic evaluation
+
+-   various levels of granularity
+
+    -   single researcher
+
+    -   department/institution
+
+    -   entire field or discipline
+
+-   distinction from other methods for evidence synthesis
+
+    -   Meta-analysis, systematic review, and bibliometrics
+    -   See Donthu et al. (2021) Table 1.
+
+-   Techniques
+
+    -   The specific metrics and indicators used in a bibliometric analysis will depend on the particular research question and the type of data being analysed
+
+    -   Two main categories: performance analysis and science mapping
+
+    -   Performance analysis
+
+        -   Descriptive
+
+        -   A lot of possible measures of performance exists
+
+            -   Citation: measure of impact and influence
+
+            -   Publication: measure of productivity
+
+                -   journal articles, conference proceedings papers, book chapters, preprints
+
+            -   Joined measures, such as h-index
+
+    -   Science mapping
+
+        -   Map the intellectual and bibliometric structure of a field
+
+        -   Methods
+
+            -   Citation analysis
+
+            -   Bibliographic coupling
+
+            -   Co-word analysis
+
+            -   Coauthorship analysis
+
+        -   It can be combined with network analysis
+
+        -   Citation analysis
+
+            -   Assumption: citation is an intellectual link between two works
+
+            -   Number of citations used to measure the influence of the paper
+
+# Reporting guidelines
+
+-   BIBLIO
+
+    -   Montazeri et al. (2023)
+
+    -   https://www.equator-network.org/reporting-guidelines/preliminary-guideline-for-reporting-bibliometric-reviews-of-the-biomedical-literature-biblio-a-minimum-requirements/
+
+-   GLOBAL
+
+    -   Ng et al. (2024)
+
+    -   https://osf.io/mtxbf/
+
+    -   https://www.researchgate.net/profile/Chaomei-Chen/publication/367156333_Guidance_List_for_repOrting_Bibliometric_AnaLyses_GLOBAL_Guidance_List_for_repOrting_Bibliometric_AnaLyses_GLOBAL_A\_Research_Protocol_Guidance_List_for_repOrting_Bibliometric_AnaLyses_GLOBAL/links/63c35f24d7e5841e0bcccee4/Guidance-List-for-repOrting-Bibliometric-AnaLyses-GLOBAL-Guidance-List-for-repOrting-Bibliometric-AnaLyses-GLOBAL-A-Research-Protocol-Guidance-List-for-repOrting-Bibliometric-AnaLyses-GLOBAL.pdf
+
+    -   Under development
+
+# Glossary
+
+-   **performance analysis:** accounts for the contributions of research constituents to a given field
+
+-   **science mapping:** focuses on the relationships between research constituents research constituents: e.g., authors, institutions, countries, and journals
+
+-   **bibliographic data:** article and journal titles, abstracts, author names, publication dates, as well as cited references and citing documents of journal articles, conference papers, and other published works
+
+-   **citation:** formal references from one publication to another.
+    They represent knowledge flow between publications.
+
+# Useful papers and tutorials
+
+-   Donthu, N., Kumar, S., Mukherjee, D., Pandey, N., & Lim, W. M.
+    (2021).
+    How to conduct a bibliometric analysis: An overview and guidelines.
+    Journal of business research, 133, 285-296.
+
+-   Montazeri, A., Mohammadi, S., M. Hesari, P., Ghaemi, M., Riazi, H., & Sheikhi-Mobarakeh, Z.
+    (2023).
+    Preliminary guideline for reporting bibliometric reviews of the biomedical literature (BIBLIO): a minimum requirements.
+    Systematic Reviews, 12(1), 239.
+
+-   Ng, J. Y., Liu, H., Masood, M., Syed, N., Stephen, D., Ayala, A. P., ... & Moher, D.
+    (2024).
+    Guidance for the Reporting of Bibliometric Analyses: A Scoping Review.
+    medRxiv, 2024-08.
+    https://rforanalytics.com/06-method3.html https://cran.r-project.org/web/packages/bibliometrix/bibliometrix.pdf
+
+# OpenAlex
+
+-   The [**OpenAlex**](https://openalex.org/)(OA) online platform enables searching the database without the use of an API
+
+-   Open-source database that does not require a subscription
+
+## The dataset
+
+-   OA harvests scholarly data from multiple different sources including scholarly registries and other scholarly databases, repositories and archives, and webcrawles.
+    [See the full list of sources.](https://help.openalex.org/hc/en-us/articles/24397285563671-About-the-data)
+
+-   Then OA disambiguate the data and creates connections between the harvested scholarly entities.
+
+-   Scholarly entities in OA are *Works, Authors, Sources, Institutions, Topics, Publishers, and Funders*
+
+-   One can search any of these entities separately or the connection between them and create quick reports on the OA platform or use bibliometric analysis methods to get a deeper insight into the scholarly data
+
+-   
+
+## Searching
+
+-   Stemming is applied by default.
+
+    -   When you search *"surgery"* you will get results containing *"surgeries"* as well.
+
+-   If you want **to disable stemming** and search for an exact phrase **use "" marks**.
+
+-   You can use **AND** and **OR** in the search to create intricate search strategies.
+
+-   **Use () to define the order** in which the search terms should be applied.
+
+-   You can define multiple search filters
+
+    -   e.g. excluding retracted papers from your search, searching for papers published by a given institution
+
+    -   To do this click on the **"+"** icon on the OA website
+
+        -   Click on **"... More"** to see all the available search filters.
+
+[Read more about how searching works at OA.](https://docs.openalex.org/how-to-use-the-api/get-lists-of-entities/search-entities)
+
+## Cite
+
+-   Cite [THIS](https://arxiv.org/abs/2205.01833) paper if you use OA for your study!
+
+# Web of Science
+
+Field key descriptions **Web of Science** provided by ChatGPT due to the lack of documentation.
+
+-   **AU:** Authors of the document (full names).
+
+-   **DE:** Author-provided keywords.
+
+-   **ID:** Keywords Plus (indexer-supplied keywords based on cited references).
+
+-   **C1:** Author affiliations (full institutional addresses).
+
+-   **CR:** Cited references (references listed in the bibliography).
+
+-   **AB:** Abstract of the document.
+
+-   **PA:** Publisher address.
+
+-   **affiliations:** Additional affiliation information (institution, department).
+
+-   **AR:** Article number (used in some journals for online-first publications).
+
+-   **EM:** Email addresses of authors.
+
+-   **BO:** Book title (if the document is a book chapter).
+
+-   **da:** Date of publication (formatted).
+
+-   **DI:** Digital Object Identifier (DOI).
+
+-   **GA:** Document delivery number (unique WOS identifier for ordering).
+
+-   **eissn:** Electronic International Standard Serial Number (eISSN).
+
+-   **earlyaccessdate:** Date the document was first made available online.
+
+-   **BE:** Book editor (for edited books).
+
+-   **FU:** Funding agencies that supported the research.
+
+-   **FX:** Funding text (detailed funding information).
+
+-   **BN:** ISBN (International Standard Book Number) for books.
+
+-   **SN:** ISSN (International Standard Serial Number) for journals.
+
+-   **JI:** Journal ISO abbreviation.
+
+-   **SO:** Full source title (journal, conference, or book title).
+
+-   **LA:** Language of the document.
+
+-   **month:** Month of publication.
+
+-   **note:** Additional notes or comments.
+
+-   **NR:** Number of references cited in the document.
+
+-   **PN:** Part number (used in some journals).
+
+-   **oa:** Open Access status of the document.
+
+-   **orcid.numbers:** ORCID (Open Researcher and Contributor ID) for authors.
+
+-   **PP:** Place of publication.
+
+-   **PU:** Publisher name.
+
+-   **SC:** Subject categories assigned to the document.
+
+-   **researcherid.numbers:** ResearcherID for authors (unique identifier in WOS).
+
+-   **SE:** Series title (for books).
+
+-   **TC:** Total citations received by the document.
+
+-   **TI:** Title of the document.
+
+-   **DT:** Document type (e.g., article, review, conference paper).
+
+-   **UT:** Unique identifier for the document in the WOS database.
+
+-   **usage.count.last.180.days:** Number of times the document was accessed in the last 180 days.
+
+-   **U2:** Usage count since 2013 (total views/downloads).
+
+-   **VL:** Volume number.
+
+-   **web.of.science.categories.:** Subject categories assigned by Web of Science.
+
+-   **web.of.science.index:** Indexes in which the document is listed (e.g., SCI, SSCI, AHCI).
+
+-   **PY:** Publication year.
+
+-   **AF:** Authors (formatted as last name, first name).
+
+-   **RP:** Reprint author and address.
+
+-   **DB:** Database source (e.g., WOS, Scopus).
+
+-   **J9:** Journal 9-character abbreviation (used in WOS).
+
+-   **AU_UN:** Unique authorship identifier (based on institutional affiliations).
+
+-   **AU1_UN:** First author's unique authorship identifier.
+
+-   **AU_UN_NR:** Number of unique authors (based on affiliation data).
+
+-   **SR_FULL:** Full source record (combines author, year, title, and source).
+
+-   **SR:** Abbreviated source record (similar to SR_FULL but condensed).

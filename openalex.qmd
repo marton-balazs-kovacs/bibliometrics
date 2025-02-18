@@ -1,0 +1,213 @@
+---
+title: "OpenAlex"
+author: "Marton Kovacs"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+## Setup
+
+To start, we load the necessary libraries.
+
+```{r setup}
+library(bibliometrix)
+library(here)
+library(tidyverse)
+```
+
+__Note:__ Some of the calculations take a lot of time and computing power.
+
+## Creating the Collection
+
+To analyze bibliometric data, we need to convert it into a bibliographic dataframe. Here we use __OpenAlex__ data.
+
+```{r}
+file_path <- here("data/works-2025-01-30T10-28-06.csv")
+
+data <- convert2df(file = file_path, dbsource = "openalex", format = "csv")
+
+# Save the converted data for later use
+save(data, file = "data/quantitative-easing_data.RData")
+```
+
+The dataset contains research articles about quantitative easing.
+
+## Performance Analysis
+
+### Descriptive Analysis
+
+Descriptive analysis provides an overview of the dataset, including the number of documents, authors, citations, and publication sources. It helps understand the dataset's composition and productivity.
+
+The `k` argument indicates the number of items included in the output tables. For example, if `k = 10` then the 10 most cited authors, papers, etc will be returned by the `summary()` function.
+
+```{r}
+descriptive_stats <- biblioAnalysis(data)
+summary(descriptive_stats, k = 10)
+```
+
+**Interpretation:**
+Look for patterns such as the growth of publications over time or variations in citation counts. Use `plot()` for visual inspection of the descriptive statistics about the dataset.
+
+```{r}
+plot(descriptive_stats, k = 10)
+```
+
+**Local vs. Global Citations:**
+- **Local citations**: Local citations measure how many times an author (or a document) included in this collection have been cited by the documents also included in the collection. Useful for internal comparisons as local citations highlight influential papers and authors within the specific research focus.
+- **Global citations**: Count citations in the entire database, providing insights into broader impact as global citations identify widely recognized work in the broader scientific community.
+
+The `localCitations()` and `citations()` functions help compute these values.
+
+```{r}
+# sep argument is the character that is used in the dataset to separate citation records from each other
+local_citations <- localCitations(data,  sep = ";")
+
+# Entities in the local citations list
+names(local_citations) # Includes the local citations for the Authors and Papers (M is the whole dataset)
+
+# List the top 10 locally cited authors
+local_citations$Authors[1:10, ]
+
+# List the top 10 locally cited papers
+local_citations$Papers[1:10, ]
+```
+
+**Interpreting the Results**
+
+- High local & high global citations: Core authors/documents relevant both locally and globally.
+- High local & low global citations: Field-specific influencers with limited broader impact.
+- Low local & high global citations: Papers of global significance, less central within your dataset.
+
+### Top Authors
+
+This analysis identifies the most prolific authors by examining the number of publications per author.
+
+```{r}
+authors <- authorProdOverTime(data)
+authors
+```
+
+**Interpretation:**
+Analyze which authors have contributed most to the field and how their productivity evolves.
+
+### Source Analysis
+
+This method evaluates the most influential journals, conferences, or publication sources.
+
+```{r}
+sources <- sourceGrowth(data, top = 5, cdf = TRUE)
+colnames(sources)
+head(sources)
+```
+
+```{r}
+sources |>
+  pivot_longer(cols = -Year,
+               names_to = "sources",
+               values_to = "n") |>
+  ggplot() +
+  aes(Year, n, group = sources, color = sources) + geom_line()
+```
+
+**Interpretation:**
+Identify core journals in the dataset and their publication trends.
+
+## Science Mapping
+
+### Thematic Map
+
+Thematic maps illustrate the evolution and structure of research topics by grouping keywords into clusters.
+
+```{r}
+thematic_map <- thematicMap(data)
+thematic_map
+```
+
+**Interpretation:**
+Clusters represent research themes, with larger clusters indicating prominent topics.
+
+**Understanding Centrality and Density:**
+- **Centrality**: Measures the degree of interaction with other clusters, indicating relevance within the field.
+- **Density**: Indicates the internal strength of the cluster, reflecting its development level.
+
+**The Four Clusters:**
+- **Niche themes**: High density, low centrality – specialized topics with limited impact on other fields.
+- **Motor themes**: High density, high centrality – well-developed and relevant topics driving the field.
+- **Emerging or declining themes**: Low density, low centrality – topics in early development or decline.
+- **Basic themes**: Low density, high centrality – fundamental topics essential across subfields.
+
+**Interpreting the Clusters:**
+- Niche themes may evolve into motor themes if they gain relevance.
+- Motor themes drive the research field and are often priority areas for future studies.
+- Emerging themes should be monitored for potential growth or decline.
+- Basic themes support the development of diverse research subfields.
+
+### Citation Analysis
+
+Citation analysis reveals the most influential papers and authors.
+
+```{r}
+citations <- citations(data, field = "author")
+
+names(citations)
+
+# The collection contains OpenAlex IDs which are not human readable
+head(citations$Cited)
+```
+
+**Interpretation:**
+Identify key contributors and landmark papers. Other field such as _"article"_ can be used to identify documents. It is possible that some of the columns are empty depending on what the OpenAlex collection contains.
+
+### Co-occurrence Network
+
+Co-occurrence networks are constructed by linking items (nodes) that appear together in the same documents. The nodes represent items like keywords, authors, or sources, while the edges represent the frequency of their co-occurrence. Higher edge weights indicate stronger relationships.
+
+```{r}
+keyword_network <- biblioNetwork(data, analysis = "co-occurrences", network = "keywords")
+
+networkPlot(keyword_network, type = "auto", size = 10, labelsize = 1, verbose = FALSE)
+```
+
+**Interpretation:**
+Clusters reveal how concepts are connected. For example, keywords frequently appearing together suggest thematic relationships. 
+
+**Alternative Networks:**
+- **Author Co-occurrence**: To identify collaborative patterns between authors.
+- **Source Co-occurrence**: To reveal publication venues with overlapping research themes.
+- **Institutional Co-occurrence**: To explore institutional collaborations.
+
+Other functions like `conceptualStructure()` can provide further insights. `conceptualStructure` creates a conceptual structure map of a scientific field performing Correspondence Analysis (CA), Multiple Correspondence Analysis (MCA) or Metric Multidimensional Scaling (MDS) and Clustering of a bipartite network of terms extracted from keyword, title or abstract fields.
+
+```{r}
+conceptualStructure(
+  data,
+  field = "DE",
+  method = "CA",
+  stemming = FALSE,
+  minDegree = 3,
+  k.max = 5
+)
+```
+
+### Historical Citation Network (HCN)
+
+HCN tracks how knowledge is transferred through citations over time.
+
+```{r}
+hcn <- histNetwork(data, sep = ";")
+
+histPlot(hcn, size = 5, labelsize = 4)
+```
+
+**Interpretation:**
+Identify foundational papers and their impact on subsequent research.
+
+## Conclusion
+
+This tutorial demonstrated the use of the bibliometrix R package with OpenAlex data. 
+
+### Analysis Typology:
+
+- **Performance Analysis**: Descriptive statistics, author productivity, source analysis.
+- **Science Mapping**: Thematic maps, citation patterns, keyword co-occurrence networks, historical citation networks, and RPYS.

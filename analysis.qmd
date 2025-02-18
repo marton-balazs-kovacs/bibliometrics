@@ -1,0 +1,306 @@
+---
+title: "Bibliometric analysis of Thaler, R. H., & Benartzi, S. (2004). Save more tomorrow™: Using behavioral economics to increase employee saving. Journal of political Economy, 112(S1), S164-S187."
+author: "Marton Kovacs"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+## Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+# Loading packages
+library(bibliometrix)
+library(here)
+library(kableExtra)
+library(tidyverse)
+
+# Loading data
+data_file <- here::here("data/savedrecs.bib")
+
+## Converting the bibtex exported data to a bibliographic dataframe
+data <- convert2df(file = data_file, dbsource = "wos", format = "bibtex")
+```
+
+# Creating the collection
+
+To create the collection we used the Clarivate Analytics Web of Science database to search for all the citation to the seminal paper of Thaler, R. H., & Benartzi, S. (2004). Save more tomorrow™: Using behavioral economics to increase employee saving. Journal of political Economy, 112(S1), S164-S187.
+
+We narrowed our search by the Web of Science Index filter to only include citations from the Social Sciences Citation Index (SSCI) and the Science Citation Index Expanded (SCI-EXPANDED). Thus, we do not inlcude any books, conference proceedings, and citations from the Arts & Humanities Citation Index.
+
+The refined search returned 810 citations on the 3rd of January 2025.
+
+We decided to export all the available data to a bibtex file for our analysis.
+
+```{r}
+colnames(data)
+
+# Field key descriptions
+# ?bibliometrix::convert2df
+```
+
+Descriptions of the filed keys can be found at (https://www.bibliometrix.org/vignettes/Introduction_to_bibliometrix.html)[https://www.bibliometrix.org/vignettes/Introduction_to_bibliometrix.html].
+
+# Bibliometric analysis
+
+```{r}
+results <- biblioAnalysis(data, sep = ";")
+```
+
+Ensure that all the papers that cite our target article are in the dataframe. There should be 810 manuscripts in our collection.
+
+```{r}
+results$Articles
+```
+
+Create summary tables of the results.
+
+```{r}
+options(width=100)
+summary_tables <- summary(object = results, k = 10, pause = FALSE, verbose = FALSE)
+```
+
+Create summary plots of the descriptive results.
+
+```{r warning=FALSE}
+summary_plots <- plot(x = results, k = 10, pause = FALSE, verbose = FALSE)
+```
+
+## Main descriptive information
+
+_Table 1._
+__Main Descriptive Information of Our Collection__
+
+```{r}
+summary_tables$MainInformationDF |> 
+  slice(-1) |>                                      # Remove the first row (title row)
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+Based on _Table 1_ it seems that most documents citing the target article are between 2004 and 2025. On average the documents are cited 44.07 times. The number of documents published that cite our target article is on the decline as suggested by the annual growth rate `r summary_tables$AnnualGrowthRate`. This could be due to the fact that we run the analysis at the beginning of a new year. Most documents in our collection are articles (_n_ = 727).
+
+_Figure 1_ shows the average number of total citations of the papers in our collection. Based on the figure it seems that the papers citing our target paper are also influential, gaining more than 50 citations on average bafore 2016. However, it seems that their influence is on a decreasing trend after that signaling that they are loosing attention over time.
+
+```{r}
+summary_plots$AverTotCitperYear
+```
+_Fig. 1._ The figure shows the average citations of the papers in our collection since the publication of the target paper.
+
+By looking at _Table 2_ we can see no substantial drop in the number of documents published over the years, which indicates that the target paper is still influential to this day. The same pattern can be seen on _Figure 2_. Based on _Figure 1_ and _Figure 2_ it seems that while the target article is still being cited even today the impact of the papers citing it is decreasing.
+
+_Table 2_
+__Annual Scientific Production__
+```{r}
+summary_tables$AnnualProduction |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+```{r}
+summary_plots$AnnualScientProd
+```
+_Fig. 2._ The figure shows the annual scientific production in our collection. Overall it depicts a growing trend of documents citing the target article over the years since its publication in 2004.
+
+## Most prodcutive authors
+
+There are 2020 authors on the 810 documents in our collection with an average of 2.98 author per document. 191 documents are single authored. _Table 3_ and _Figure 3_ show the most productive authors regarding our target article.
+
+_Table 3_
+__The Ten Most Productive Authors__
+```{r}
+summary_tables$MostProdAuthors |> 
+  select(-3) |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+```{r}
+summary_plots$MostProdAuthors
+```
+_Fig. 3._ The figure shows the most productive authors regarding our target article. The number of documents show the number of articles by these authors that cite our target article.
+
+It seems that `r summary_tables$MostProdAuthors[1, 1]` is the most productive author who cited the target paper `r summary_tables$MostProdAuthors[1, 2]`. The _Artciles Fractionalized_ metrics show the most productive authors contribution weighted by the number of co-authors on their publictation. `r summary_tables$MostProdAuthors[1, 1]` is still the most productive author even if we take the number of co-authors into account.
+
+_Table 4_ shows the H-indices of the most productive authors. This metric can be used to assess their influence in general, outside of the scope of the target article. The H-index is an author-level metric that attempts to measure both the productivity (number of articles published) and citation impact (number of citations) of the publications of a scientist or scholar.
+
+_Table 4_
+__H-indices of the Most Productive Authors__
+```{r}
+mostprodauthors <- gsub(","," ",names(results$Authors)[1:10])
+
+indices <- Hindex(data, field = "author", elements=mostprodauthors, sep = ";", years = 50)
+
+indices$H |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+We can also see the top authors productivity over time related to our target article on _Figure 4_. Based on the figure most authors published papers consistently citing the target article in the past decade.
+
+```{r}
+authorProdOverTime(data, k = 10, graph = TRUE)
+```
+_Fig. 4._ The figure shows the top ten authors productivity over time related to the target article.
+
+## Most cited papers
+
+_Table 5_ shows the most cited papers in our collection. The most cited paper of `r summary_tables$MostCitedPapers[1, 1]` provides a general overview of the recent literature on _financial literacy_, exploring evidence based on survey studies and theoretical advancements in the area.
+
+_TC_ shows the _Total Citations_ to the article, including the ones in the current collection.
+
+The _Normalized Total Citations (NTC)_ is calculated by dividing the total number of citations of an article by the average number of citations of all documents published in the same year; this measure takes into account differences in citation practices across disciplines and provides a more meaningful comparison of citation impact. (https://pmc.ncbi.nlm.nih.gov/articles/PMC10073695/)[https://pmc.ncbi.nlm.nih.gov/articles/PMC10073695/] 
+
+_Table 5_
+__The Ten Most Cited Papers in Our Collection__
+```{r}
+summary_tables$MostCitedPapers |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+## Most productive countries
+
+_Table 6_ shows the most productive countries. _SCP_ shows the single country publications, while _MCP_ shows the number of multiple country publications. It seems that the _Save more tomorrow_ intervention is the most popular in the USA by far. The same data are depicted on _Figure 5_.
+
+_Table 6_
+__Most Productive Countries by the Number of Publications __
+```{r}
+summary_tables$MostProdCountries |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+```{r}
+summary_plots$MostProdCountries
+```
+_Fig. 5._ The figure shows the most productive countries by the number of publications citing the target article.
+
+_Table 7_ shows that while papers published in the USA are highly cited and have a high average number of citations, interestingly, papers published in Hungary have an even higher average article citation.
+
+_Table 7_
+__Most productive countries by the Average Number of Citations__
+```{r}
+summary_tables$TCperCountries |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+_Table 8_ shows the most relevant journals that published documents citing our target article. The `r summary_tables$MostRelSources[1, 1]` published the most, `r summary_tables$MostRelSources[1, 2]` articles citing the seminal paper by Thaler.
+
+```{r}
+summary_tables$MostRelSources |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+## Citation analysis
+
+During the citation analysis we explore the citation patterns of the documents in our collection. To do this we have to inspect the citations of one document to determine the separator between the citations.
+
+```{r}
+data$CR[1]
+```
+
+It is a semi-colon. Now, we can use bibliometrix to prepare the citation data focusing on the references.
+
+```{r}
+cr_article <- citations(data, field = "article", sep = ";")
+```
+
+_Table 9_ shows the ten most frequently cited references in the documents in our collection. Not surprisingly, all the papers cite the seminal paper of Thaler, since our collection consists of papers citing this target article.
+
+
+_Table 9_
+__Ten Most Frequently Cited Papers In Our Collection's Reference Lists__
+```{r}
+as_tibble(cr_article$Cited[1:10]) |>
+  kbl() |>
+  kable_styling(full_width = FALSE,
+                bootstrap_options = c("striped", "hover"))
+```
+
+_Table 10_ shows the most frequently cited authors in the reference lists of the documents in our collection.
+_Table 10_
+__Ten Most Frequently Cited Authors In Our Collection's Reference Lists__
+```{r}
+cr_author <- citations(data, field = "author", sep = ";")
+
+as_tibble(cr_author$Cited[1:10]) |>
+  kbl() |>
+  kable_styling(full_width = FALSE,
+                bootstrap_options = c("striped", "hover"))
+```
+
+Global citations means that total citations that an article, included in your collection, has received from documents indexed on WoS. In contrast,local citations measure how many times a document included in this collection have been cited by other documents also in the collection.
+
+The most frequently and locally cited authors are presented in _Table 11_.
+
+_Table 11_
+__Most Frequently and Locally Cited Authors__
+```{r}
+CR_local <- localCitations(data, sep = ";")
+CR_local$Authors[1:10,]
+```
+
+The most frequently cited documents are presented in _Table 12_.  _LCS_ shows the number of local citations, while _GCS_ shows the number of global citations. 
+
+_Table 12_
+__Most Frequently and Locally Cited Documents__
+```{r}
+CR_local$Papers[1:10,]
+```
+
+## Keyword Co-occurrence
+
+The most relevant keyword provided by the authors was `r summary_tables$MostRelKeywords[1, 1]`, while the most relevant keyword provided by WoS was `r summary_tables$MostRelKeywords[1, 3]`.
+
+```{r}
+summary_tables$MostRelKeywords |> 
+  kbl() |> 
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+We can do topic analysis on the keywords of these documents. WoS provides “Keyword Plus” (ID tag) that many publications advice as the best content field to perform topic analysis (https://www.bibliometrix.org/home/index.php/faq)[https://www.bibliometrix.org/home/index.php/faq]. There are 1770 keywords of this kind.
+
+To map the thematic structure using co-occurring keywords, we create the keyword co-occurrence network.
+
+```{r}
+network_matrix <- biblioNetwork(data, analysis = "co-occurrences", 
+                                network = "keywords", sep = ";")
+```
+
+_Figure 6_ shows the keyword co-occurance network. There are two distinct groups of keywords provided in our collection.
+
+```{r}
+networkPlot(network_matrix, normalize = "association", 
+            weighted = TRUE, n = 50, type = "auto", size = 5, labelsize = 1)
+```
+
+# Co-authorship and Collaboration Networks
+
+Visualize co-authorship network.
+
+```{r}
+# Co-authorship network (authors)
+co_authorship <- biblioNetwork(data, analysis = "collaboration", 
+                               network = "authors", sep = ";")
+
+# Plot co-authorship network
+networkPlot(co_authorship, normalize = "association", 
+            weighted = TRUE, n = 30, type = "fruchterman", size = 5, labelsize = 1)
+
+```
+
+```{r}
+summary_plots$AverArtCitperYear
+```
+
+## Three-field plot
+
+We can depict the relation between three field keys using a three-field plot (Sankey diagram). For example, we can show the proportion of keywords for each country and the year of publication.
+
+```{r}
+threeFieldsPlot(data, fields = c("DE","AU","CR"), n = c(20, 20, 20))
+```
+
